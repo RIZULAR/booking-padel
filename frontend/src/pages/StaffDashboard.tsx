@@ -63,11 +63,11 @@ export default function StaffDashboard() {
         onClick={() => setMobileOpen(false)}
         className={`flex items-center gap-3 px-3.5 py-2.5 text-xs font-medium rounded-lg transition-colors ${
           isActive 
-            ? 'bg-white text-brand-700 font-semibold border border-neutral-200 shadow-2xs' 
-            : 'text-neutral-600 hover:bg-neutral-200/60 hover:text-neutral-900'
+            ? 'bg-white/15 text-white font-semibold border border-white/20 shadow-2xs' 
+            : 'text-brand-100/80 hover:bg-white/10 hover:text-white'
         }`}
       >
-        <Icon className={`w-4 h-4 flex-shrink-0 ${isActive ? 'text-brand-600' : 'text-neutral-400'}`} />
+        <Icon className={`w-4 h-4 flex-shrink-0 ${isActive ? 'text-white' : 'text-brand-200/80'}`} />
         <span>{label}</span>
       </Link>
     );
@@ -77,26 +77,26 @@ export default function StaffDashboard() {
     <div className="fixed inset-0 bg-neutral-50 flex flex-col md:flex-row overflow-hidden z-30 font-sans">
       {/* Staff Sidebar */}
       <aside className={`
-        fixed md:static inset-y-0 left-0 z-40 w-64 bg-neutral-50 border-r border-neutral-200 p-4 flex flex-col justify-between transition-transform duration-200 ease-in-out flex-shrink-0
+        fixed md:static inset-y-0 left-0 z-40 w-64 bg-brand-700 text-white border-r border-brand-800 p-4 flex flex-col justify-between transition-transform duration-200 ease-in-out flex-shrink-0
         ${mobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
       `}>
         <div className="space-y-6">
-          <div className="flex items-center justify-between px-2 pt-2 border-b border-neutral-100 pb-4">
+          <div className="flex items-center justify-between px-2 pt-2 border-b border-brand-600/60 pb-4">
             <div className="flex items-center gap-2">
-              <span className="w-7 h-7 bg-brand-600 text-white rounded-lg flex items-center justify-center font-semibold text-xs">P</span>
-              <span className="font-semibold text-sm tracking-tight text-neutral-900">PADEL STAFF</span>
+              <span className="w-7 h-7 bg-white text-brand-700 rounded-lg flex items-center justify-center font-bold text-xs">P</span>
+              <span className="font-semibold text-sm tracking-tight text-white">PADEL STAFF</span>
             </div>
-            <span className="text-[10px] font-medium bg-neutral-100 text-neutral-600 px-2 py-0.5 rounded border border-neutral-200">
+            <span className="text-[10px] font-medium bg-brand-800/60 text-brand-100 px-2 py-0.5 rounded border border-brand-600/50">
               v1.0
             </span>
-            <button onClick={() => setMobileOpen(false)} className="md:hidden text-neutral-400 hover:text-neutral-900">
+            <button onClick={() => setMobileOpen(false)} className="md:hidden text-brand-200 hover:text-white">
               <X className="w-5 h-5" />
             </button>
           </div>
 
           <nav className="space-y-4">
             <div>
-              <div className="px-3 text-[10px] font-medium text-neutral-400 uppercase tracking-wider mb-1.5">Operasional</div>
+              <div className="px-3 text-[10px] font-medium text-brand-200/80 uppercase tracking-wider mb-1.5">Operasional</div>
               <div className="space-y-0.5">
                 <NavItem to="/staff" label="Dashboard" icon={LayoutDashboard} />
                 <NavItem to="/staff/bookings" label="Reservasi" icon={Calendar} />
@@ -105,7 +105,7 @@ export default function StaffDashboard() {
             </div>
 
             <div>
-              <div className="px-3 text-[10px] font-medium text-neutral-400 uppercase tracking-wider mb-1.5">Transaksi</div>
+              <div className="px-3 text-[10px] font-medium text-brand-200/80 uppercase tracking-wider mb-1.5">Transaksi</div>
               <div className="space-y-0.5">
                 <NavItem to="/staff/schedule" label="Jadwal" icon={Clock} />
                 <NavItem to="/staff/payments" label="Pembayaran" icon={CreditCard} />
@@ -113,7 +113,7 @@ export default function StaffDashboard() {
             </div>
 
             <div>
-              <div className="px-3 text-[10px] font-medium text-neutral-400 uppercase tracking-wider mb-1.5">Akun</div>
+              <div className="px-3 text-[10px] font-medium text-brand-200/80 uppercase tracking-wider mb-1.5">Akun</div>
               <div className="space-y-0.5">
                 <NavItem to="/staff/profile" label="Profil" icon={User} />
               </div>
@@ -122,26 +122,26 @@ export default function StaffDashboard() {
         </div>
 
         {/* Sidebar Footer Actions */}
-        <div className="pt-4 border-t border-neutral-200 space-y-2">
-          <div className="px-3 py-1.5 flex items-center gap-2.5 text-xs rounded-lg bg-neutral-50 border border-neutral-200">
-            <div className="w-6 h-6 rounded-full bg-brand-100 text-brand-700 flex items-center justify-center font-semibold text-xs flex-shrink-0">
+        <div className="pt-4 border-t border-brand-600/60 space-y-2">
+          <div className="px-3 py-1.5 flex items-center gap-2.5 text-xs rounded-lg bg-brand-800/60 border border-brand-600/50">
+            <div className="w-6 h-6 rounded-full bg-white text-brand-700 flex items-center justify-center font-bold text-xs flex-shrink-0">
               {user?.name?.[0]?.toUpperCase() || 'S'}
             </div>
             <div className="truncate">
-              <p className="font-medium text-neutral-900 truncate">{user?.name}</p>
-              <p className="text-[10px] text-neutral-500">Staf Bertugas</p>
+              <p className="font-medium text-white truncate">{user?.name}</p>
+              <p className="text-[10px] text-brand-200">Staf Bertugas</p>
             </div>
           </div>
           
           <Link 
             to="/" 
-            className="flex items-center gap-2 px-3 py-2 text-xs font-medium text-neutral-600 hover:text-brand-600 hover:bg-neutral-50 rounded-lg transition-colors"
+            className="flex items-center gap-2 px-3 py-2 text-xs font-medium text-brand-100 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
           >
             <ExternalLink className="w-4 h-4" /> Kembali ke Situs Utama
           </Link>
           <button 
             onClick={() => { logout(); navigate('/login'); }}
-            className="w-full flex items-center gap-2 px-3 py-2 text-xs font-medium text-red-600 hover:bg-red-50 rounded-lg transition-colors text-left"
+            className="w-full flex items-center gap-2 px-3 py-2 text-xs font-medium text-red-200 hover:bg-red-500/20 hover:text-red-100 rounded-lg transition-colors text-left"
           >
             <LogOut className="w-4 h-4" /> Keluar
           </button>

@@ -94,11 +94,11 @@ export default function AdminDashboard() {
         to={to} 
         className={`flex items-center gap-3 px-3.5 py-2.5 text-xs font-medium rounded-lg transition-colors ${
           isActive 
-            ? 'bg-white text-brand-700 font-semibold border border-neutral-200 shadow-2xs' 
-            : 'text-neutral-600 hover:bg-neutral-200/60 hover:text-neutral-900'
+            ? 'bg-white/15 text-white font-semibold border border-white/20 shadow-2xs' 
+            : 'text-brand-100/80 hover:bg-white/10 hover:text-white'
         }`}
       >
-        <Icon className={`w-4 h-4 flex-shrink-0 ${isActive ? 'text-brand-600' : 'text-neutral-400'}`} />
+        <Icon className={`w-4 h-4 flex-shrink-0 ${isActive ? 'text-white' : 'text-brand-200/80'}`} />
         <span>{label}</span>
       </Link>
     );
@@ -107,21 +107,21 @@ export default function AdminDashboard() {
   return (
     <div className="fixed inset-0 bg-neutral-50 flex flex-col md:flex-row overflow-hidden z-30 font-sans">
       {/* Sidebar Navigation (Admin Flow Section 3 - Pinned Fixed Sidebar) */}
-      <aside className="w-full md:w-64 h-full bg-neutral-50 border-r border-neutral-200 flex-shrink-0 flex flex-col justify-between p-4 overflow-y-auto">
+      <aside className="w-full md:w-64 h-full bg-brand-700 text-white border-r border-brand-800 flex-shrink-0 flex flex-col justify-between p-4 overflow-y-auto">
         <div className="space-y-6">
           <div className="flex items-center justify-between px-2 pt-2">
             <div className="flex items-center gap-2">
-              <span className="w-7 h-7 bg-brand-600 text-white rounded-lg flex items-center justify-center font-semibold text-xs">P</span>
-              <span className="font-semibold text-sm tracking-tight text-neutral-900">PADEL ADMIN</span>
+              <span className="w-7 h-7 bg-white text-brand-700 rounded-lg flex items-center justify-center font-bold text-xs">P</span>
+              <span className="font-semibold text-sm tracking-tight text-white">PADEL ADMIN</span>
             </div>
-            <span className="text-[10px] font-medium bg-neutral-100 text-neutral-600 px-2 py-0.5 rounded border border-neutral-200">
+            <span className="text-[10px] font-medium bg-brand-800/60 text-brand-100 px-2 py-0.5 rounded border border-brand-600/50">
               v1.0
             </span>
           </div>
 
           <nav className="space-y-4">
             <div>
-              <div className="px-3 text-[10px] font-medium text-neutral-400 uppercase tracking-wider mb-1.5">Utama</div>
+              <div className="px-3 text-[10px] font-medium text-brand-200/80 uppercase tracking-wider mb-1.5">Utama</div>
               <div className="space-y-0.5">
                 <NavItem to="/admin" label="Dashboard" icon={LayoutDashboard} />
                 <NavItem to="/admin/bookings" label="Reservasi" icon={Calendar} />
@@ -129,7 +129,7 @@ export default function AdminDashboard() {
             </div>
 
             <div>
-              <div className="px-3 text-[10px] font-medium text-neutral-400 uppercase tracking-wider mb-1.5">Venue</div>
+              <div className="px-3 text-[10px] font-medium text-brand-200/80 uppercase tracking-wider mb-1.5">Venue</div>
               <div className="space-y-0.5">
                 <NavItem to="/admin/courts" label="Lapangan" icon={Shield} />
                 <NavItem to="/admin/schedules" label="Jadwal" icon={Clock} />
@@ -138,7 +138,7 @@ export default function AdminDashboard() {
             </div>
 
             <div>
-              <div className="px-3 text-[10px] font-medium text-neutral-400 uppercase tracking-wider mb-1.5">Pengguna</div>
+              <div className="px-3 text-[10px] font-medium text-brand-200/80 uppercase tracking-wider mb-1.5">Pengguna</div>
               <div className="space-y-0.5">
                 <NavItem to="/admin/customers" label="Pelanggan" icon={Users} />
                 <NavItem to="/admin/staff" label="Staf" icon={UserCheck} />
@@ -146,7 +146,7 @@ export default function AdminDashboard() {
             </div>
 
             <div>
-              <div className="px-3 text-[10px] font-medium text-neutral-400 uppercase tracking-wider mb-1.5">Keuangan</div>
+              <div className="px-3 text-[10px] font-medium text-brand-200/80 uppercase tracking-wider mb-1.5">Keuangan</div>
               <div className="space-y-0.5">
                 <NavItem to="/admin/payments" label="Pembayaran" icon={CreditCard} />
                 <NavItem to="/admin/reports" label="Laporan" icon={BarChart3} />
@@ -154,7 +154,7 @@ export default function AdminDashboard() {
             </div>
 
             <div>
-              <div className="px-3 text-[10px] font-medium text-neutral-400 uppercase tracking-wider mb-1.5">Pengaturan</div>
+              <div className="px-3 text-[10px] font-medium text-brand-200/80 uppercase tracking-wider mb-1.5">Pengaturan</div>
               <div className="space-y-0.5">
                 <NavItem to="/admin/settings" label="Pengaturan" icon={SettingsIcon} />
               </div>
@@ -163,16 +163,16 @@ export default function AdminDashboard() {
         </div>
 
         {/* Sidebar Footer Actions */}
-        <div className="pt-4 border-t border-neutral-200 space-y-2">
+        <div className="pt-4 border-t border-brand-600/60 space-y-2">
           <Link 
             to="/" 
-            className="flex items-center gap-2 px-3 py-2 text-xs font-medium text-neutral-600 hover:text-brand-600 hover:bg-neutral-50 rounded-lg transition-colors"
+            className="flex items-center gap-2 px-3 py-2 text-xs font-medium text-brand-100 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
           >
             <ExternalLink className="w-4 h-4" /> Kembali ke Situs Utama
           </Link>
           <button 
             onClick={() => { localStorage.clear(); navigate('/login'); }}
-            className="w-full flex items-center gap-2 px-3 py-2 text-xs font-medium text-red-600 hover:bg-red-50 rounded-lg transition-colors text-left cursor-pointer"
+            className="w-full flex items-center gap-2 px-3 py-2 text-xs font-medium text-red-200 hover:bg-red-500/20 hover:text-red-100 rounded-lg transition-colors text-left cursor-pointer"
           >
             <LogOut className="w-4 h-4" /> Keluar
           </button>
