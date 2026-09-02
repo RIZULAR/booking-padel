@@ -8,6 +8,9 @@ node_modules/
 .impeccable/
 .vscode/
 .idea/
+.agents/
+.claude/
+.windsurf/
 *.swp
 *.swo
 
