@@ -819,127 +819,127 @@ function StaffSchedule() {
         </div>
       </div>
 
-      {/* Horizontal Timetable Timeline Matrix (Styleguide Compliant, Ultra-Fast 60fps Scrolling) */}
-      <Card className="border border-neutral-200 bg-white shadow-xs rounded-xl overflow-hidden">
-        <CardContent className="p-0">
-          <div className="overflow-x-auto scroll-smooth overscroll-x-contain">
-            <table className="w-full text-xs border-collapse min-w-[1200px]">
-              <thead>
-                <tr className="bg-neutral-100/90 text-neutral-700 border-b border-neutral-200">
-                  <th className="p-3 text-left w-44 sticky left-0 z-20 bg-neutral-100 border-r border-neutral-200 font-bold uppercase tracking-wider text-[11px]">
-                    Lapangan / Court
-                  </th>
-                  {timeSlots.map(time => (
-                    <th key={time} className="p-2.5 text-center border-r border-neutral-200 min-w-[110px] font-mono font-bold text-neutral-800">
-                      {time} WIB
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-neutral-200">
-                {courts.map(court => {
-                  let skipCount = 0;
-
-                  return (
-                    <tr key={court.id} className="hover:bg-neutral-50/40 transition-colors">
-                      {/* Sticky Court Column (Optimized without drop-shadow calculation on scroll) */}
-                      <td className="p-3 font-bold text-neutral-900 bg-white sticky left-0 z-10 border-r border-neutral-200">
-                        <div className="text-xs truncate">{court.name}</div>
-                        <span className="text-[10px] font-semibold text-neutral-500">
-                          {court.indoor ? 'Indoor' : 'Outdoor'}
-                        </span>
-                      </td>
-
-                      {/* Hourly Columns for this Court with colSpan Merging */}
-                      {timeSlots.map((time, idx) => {
-                        if (skipCount > 0) {
-                          skipCount--;
-                          return null;
-                        }
-
-                        const startingBooking = startBookingMap[`${court.id}_${time}`];
-                        const ongoingBooking = !startingBooking ? dayBookings.find(b => 
-                          b.courtId === court.id && b.startTime <= time && b.endTime > time
-                        ) : null;
-
-                        const booking = startingBooking || ongoingBooking;
-
-                        if (booking) {
-                          const parseHour = (t: string) => parseInt(t.split(':')[0], 10);
-                          const startH = startingBooking ? parseHour(time) : parseHour(booking.startTime);
-                          const endH = parseHour(booking.endTime);
-                          const totalDurationHours = endH - startH;
-
-                          const currentHour = parseHour(time);
-                          const spanHours = Math.max(1, Math.min(endH - currentHour, timeSlots.length - idx));
-                          skipCount = spanHours - 1;
-
-                          return (
-                            <td 
-                              key={time} 
-                              colSpan={spanHours}
-                              className="p-1.5 border-r border-neutral-200 last:border-r-0 text-center align-middle h-20"
-                            >
-                              <div 
-                                onClick={() => setSelectedBooking(booking)}
-                                className={`p-2.5 rounded-lg border text-left cursor-pointer transition-colors shadow-2xs h-full flex flex-col justify-between ${
-                                  booking.status === 'confirmed'
-                                    ? 'bg-brand-50 border-brand-300 hover:bg-brand-100/80'
-                                    : booking.status === 'checked_in'
-                                    ? 'bg-sky-50 border-sky-300 hover:bg-sky-100/80'
-                                    : booking.status === 'completed'
-                                    ? 'bg-neutral-100 border-neutral-300 hover:bg-neutral-200/80'
-                                    : 'bg-amber-50 border-amber-300 hover:bg-amber-100/80'
-                                }`}
-                              >
-                                <div className="flex items-center justify-between gap-2">
-                                  <div className="font-bold text-neutral-900 text-xs truncate">
-                                    {booking.user?.name || 'Customer'}
-                                  </div>
-                                  <Badge variant={
-                                    booking.status === 'confirmed' ? 'success' :
-                                    booking.status === 'checked_in' ? 'info' :
-                                    booking.status === 'completed' ? 'secondary' : 'warning'
-                                  } className="px-1.5 py-0.5 text-[9px] shrink-0">
-                                    {booking.status === 'confirmed' ? 'Confirmed' :
-                                     booking.status === 'checked_in' ? 'Checked-in' :
-                                     booking.status === 'completed' ? 'Done' : 'Pending'}
-                                  </Badge>
-                                </div>
-
-                                <div className="flex items-center justify-between text-[10px] text-neutral-600 font-mono mt-1">
-                                  <span>{booking.bookingCode}</span>
-                                  <span className="font-sans font-medium text-brand-700 bg-white/80 px-1.5 py-0.5 rounded border border-neutral-200/80">
-                                    {booking.startTime} - {booking.endTime} ({totalDurationHours} Jam)
-                                  </span>
-                                </div>
-                              </div>
-                            </td>
-                          );
-                        }
-
-                        return (
-                          <td 
-                            key={time} 
-                            className="p-1.5 border-r border-neutral-200 last:border-r-0 text-center align-middle h-20 min-w-[110px]"
-                          >
-                            <button 
-                              onClick={() => setSelectedEmptySlot({ courtName: court.name, courtId: court.id, time })}
-                              className="w-full h-full min-h-[48px] rounded-lg border border-dashed border-neutral-300 hover:border-emerald-500 hover:bg-emerald-50/50 flex items-center justify-center text-neutral-400 hover:text-emerald-700 transition-colors text-[11px] font-medium"
-                            >
-                              <span>+</span> Kosong
-                            </button>
-                          </td>
-                        );
-                      })}
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+      {/* Horizontal Timetable Timeline Matrix (GPU-Accelerated Two-Panel Flex Architecture) */}
+      <div className="flex border border-neutral-200 bg-white shadow-xs rounded-xl overflow-hidden text-xs">
+        {/* Left Column Panel: Fixed Court Names */}
+        <div className="w-44 flex-shrink-0 border-r border-neutral-200 bg-neutral-50/70 z-10">
+          <div className="h-12 px-3 font-bold uppercase tracking-wider text-[11px] text-neutral-700 border-b border-neutral-200 flex items-center bg-neutral-100/90">
+            Lapangan / Court
           </div>
-        </CardContent>
-      </Card>
+          {courts.map(court => (
+            <div key={court.id} className="h-20 p-3 flex flex-col justify-center border-b border-neutral-200 last:border-b-0 bg-white">
+              <div className="text-xs font-bold text-neutral-900 truncate">{court.name}</div>
+              <span className="text-[10px] font-semibold text-neutral-500">
+                {court.indoor ? 'Indoor' : 'Outdoor'}
+              </span>
+            </div>
+          ))}
+        </div>
+
+        {/* Right Column Panel: Natively GPU-Scrollable Timetable Grid */}
+        <div className="flex-1 overflow-x-auto contain-paint scroll-smooth">
+          <div className="min-w-[1540px]">
+            {/* Header Timeline Row */}
+            <div className="flex h-12 border-b border-neutral-200 bg-neutral-100/90">
+              {timeSlots.map(time => (
+                <div key={time} className="w-28 flex-shrink-0 p-2.5 text-center border-r border-neutral-200 font-mono font-bold text-neutral-800 flex items-center justify-center">
+                  {time} WIB
+                </div>
+              ))}
+            </div>
+
+            {/* Timetable Slots Rows for Courts */}
+            {courts.map(court => {
+              let skipCount = 0;
+
+              return (
+                <div key={court.id} className="flex h-20 border-b border-neutral-200 last:border-b-0 hover:bg-neutral-50/40 transition-colors">
+                  {timeSlots.map((time, idx) => {
+                    if (skipCount > 0) {
+                      skipCount--;
+                      return null;
+                    }
+
+                    const startingBooking = startBookingMap[`${court.id}_${time}`];
+                    const ongoingBooking = !startingBooking ? dayBookings.find(b => 
+                      b.courtId === court.id && b.startTime <= time && b.endTime > time
+                    ) : null;
+
+                    const booking = startingBooking || ongoingBooking;
+
+                    if (booking) {
+                      const parseHour = (t: string) => parseInt(t.split(':')[0], 10);
+                      const startH = startingBooking ? parseHour(time) : parseHour(booking.startTime);
+                      const endH = parseHour(booking.endTime);
+                      const totalDurationHours = endH - startH;
+
+                      const currentHour = parseHour(time);
+                      const spanHours = Math.max(1, Math.min(endH - currentHour, timeSlots.length - idx));
+                      skipCount = spanHours - 1;
+
+                      const widthPx = spanHours * 112; // 112px per slot
+
+                      return (
+                        <div 
+                          key={time} 
+                          style={{ width: `${widthPx}px` }} 
+                          className="flex-shrink-0 p-1.5 border-r border-neutral-200 h-full"
+                        >
+                          <div 
+                            onClick={() => setSelectedBooking(booking)}
+                            className={`p-2 rounded-lg border text-left cursor-pointer transition-colors shadow-2xs h-full flex flex-col justify-between ${
+                              booking.status === 'confirmed'
+                                ? 'bg-brand-50 border-brand-300 hover:bg-brand-100/80'
+                                : booking.status === 'checked_in'
+                                ? 'bg-sky-50 border-sky-300 hover:bg-sky-100/80'
+                                : booking.status === 'completed'
+                                ? 'bg-neutral-100 border-neutral-300 hover:bg-neutral-200/80'
+                                : 'bg-amber-50 border-amber-300 hover:bg-amber-100/80'
+                            }`}
+                          >
+                            <div className="flex items-center justify-between gap-1">
+                              <div className="font-bold text-neutral-900 text-xs truncate">
+                                {booking.user?.name || 'Customer'}
+                              </div>
+                              <Badge variant={
+                                booking.status === 'confirmed' ? 'success' :
+                                booking.status === 'checked_in' ? 'info' :
+                                booking.status === 'completed' ? 'secondary' : 'warning'
+                              } className="px-1.5 py-0.5 text-[9px] shrink-0">
+                                {booking.status === 'confirmed' ? 'Confirmed' :
+                                 booking.status === 'checked_in' ? 'Checked-in' :
+                                 booking.status === 'completed' ? 'Done' : 'Pending'}
+                              </Badge>
+                            </div>
+
+                            <div className="flex items-center justify-between text-[10px] text-neutral-600 font-mono mt-1">
+                              <span>{booking.bookingCode}</span>
+                              <span className="font-sans font-medium text-brand-700 bg-white/80 px-1.5 py-0.5 rounded border border-neutral-200/80">
+                                {booking.startTime} - {booking.endTime} ({totalDurationHours} Jam)
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    }
+
+                    return (
+                      <div key={time} className="w-28 flex-shrink-0 p-1.5 border-r border-neutral-200 h-full">
+                        <button 
+                          onClick={() => setSelectedEmptySlot({ courtName: court.name, courtId: court.id, time })}
+                          className="w-full h-full rounded-lg border border-dashed border-neutral-300 hover:border-emerald-500 hover:bg-emerald-50/50 flex items-center justify-center text-neutral-400 hover:text-emerald-700 transition-colors text-[11px] font-medium"
+                        >
+                          <span>+</span> Kosong
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
 
       {/* Modal Detail Booking Slot Jam */}
       {selectedBooking && (
