@@ -92,7 +92,7 @@ export default function AdminDashboard() {
     return (
       <Link 
         to={to} 
-        className={`flex items-center gap-3 px-3.5 py-2.5 text-xs font-semibold rounded-lg transition-colors ${
+        className={`flex items-center gap-3 px-3.5 py-2.5 text-xs font-medium rounded-lg transition-colors ${
           isActive 
             ? 'bg-brand-600 text-white shadow-xs' 
             : 'text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900'
@@ -111,17 +111,17 @@ export default function AdminDashboard() {
         <div className="space-y-6">
           <div className="flex items-center justify-between px-2 pt-2">
             <div className="flex items-center gap-2">
-              <span className="w-7 h-7 bg-brand-600 text-white rounded-lg flex items-center justify-center font-bold text-xs">P</span>
-              <span className="font-extrabold text-sm tracking-tight text-neutral-900">PADEL ADMIN</span>
+              <span className="w-7 h-7 bg-brand-600 text-white rounded-lg flex items-center justify-center font-semibold text-xs">P</span>
+              <span className="font-semibold text-sm tracking-tight text-neutral-900">PADEL ADMIN</span>
             </div>
-            <span className="text-[10px] font-bold bg-neutral-100 text-neutral-600 px-2 py-0.5 rounded border border-neutral-200">
+            <span className="text-[10px] font-medium bg-neutral-100 text-neutral-600 px-2 py-0.5 rounded border border-neutral-200">
               v1.0
             </span>
           </div>
 
           <nav className="space-y-4">
             <div>
-              <div className="px-3 text-[10px] font-bold text-neutral-400 uppercase tracking-wider mb-1.5">Utama</div>
+              <div className="px-3 text-[10px] font-medium text-neutral-400 uppercase tracking-wider mb-1.5">Utama</div>
               <div className="space-y-0.5">
                 <NavItem to="/admin" label="Dashboard" icon={LayoutDashboard} />
                 <NavItem to="/admin/bookings" label="Reservasi" icon={Calendar} />
@@ -129,7 +129,7 @@ export default function AdminDashboard() {
             </div>
 
             <div>
-              <div className="px-3 text-[10px] font-bold text-neutral-400 uppercase tracking-wider mb-1.5">Venue</div>
+              <div className="px-3 text-[10px] font-medium text-neutral-400 uppercase tracking-wider mb-1.5">Venue</div>
               <div className="space-y-0.5">
                 <NavItem to="/admin/courts" label="Lapangan" icon={Shield} />
                 <NavItem to="/admin/schedules" label="Jadwal" icon={Clock} />
@@ -138,7 +138,7 @@ export default function AdminDashboard() {
             </div>
 
             <div>
-              <div className="px-3 text-[10px] font-bold text-neutral-400 uppercase tracking-wider mb-1.5">Pengguna</div>
+              <div className="px-3 text-[10px] font-medium text-neutral-400 uppercase tracking-wider mb-1.5">Pengguna</div>
               <div className="space-y-0.5">
                 <NavItem to="/admin/customers" label="Pelanggan" icon={Users} />
                 <NavItem to="/admin/staff" label="Staf" icon={UserCheck} />
@@ -146,7 +146,7 @@ export default function AdminDashboard() {
             </div>
 
             <div>
-              <div className="px-3 text-[10px] font-bold text-neutral-400 uppercase tracking-wider mb-1.5">Keuangan</div>
+              <div className="px-3 text-[10px] font-medium text-neutral-400 uppercase tracking-wider mb-1.5">Keuangan</div>
               <div className="space-y-0.5">
                 <NavItem to="/admin/payments" label="Pembayaran" icon={CreditCard} />
                 <NavItem to="/admin/reports" label="Laporan" icon={BarChart3} />
@@ -154,7 +154,7 @@ export default function AdminDashboard() {
             </div>
 
             <div>
-              <div className="px-3 text-[10px] font-bold text-neutral-400 uppercase tracking-wider mb-1.5">Pengaturan</div>
+              <div className="px-3 text-[10px] font-medium text-neutral-400 uppercase tracking-wider mb-1.5">Pengaturan</div>
               <div className="space-y-0.5">
                 <NavItem to="/admin/settings" label="Pengaturan" icon={SettingsIcon} />
               </div>
@@ -166,13 +166,13 @@ export default function AdminDashboard() {
         <div className="pt-4 border-t border-neutral-200 space-y-2">
           <Link 
             to="/" 
-            className="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-neutral-600 hover:text-brand-600 hover:bg-neutral-50 rounded-lg transition-colors"
+            className="flex items-center gap-2 px-3 py-2 text-xs font-medium text-neutral-600 hover:text-brand-600 hover:bg-neutral-50 rounded-lg transition-colors"
           >
             <ExternalLink className="w-4 h-4" /> Kembali ke Situs Utama
           </Link>
           <button 
             onClick={() => { localStorage.clear(); navigate('/login'); }}
-            className="w-full flex items-center gap-2 px-3 py-2 text-xs font-semibold text-red-600 hover:bg-red-50 rounded-lg transition-colors text-left cursor-pointer"
+            className="w-full flex items-center gap-2 px-3 py-2 text-xs font-medium text-red-600 hover:bg-red-50 rounded-lg transition-colors text-left cursor-pointer"
           >
             <LogOut className="w-4 h-4" /> Keluar
           </button>
@@ -184,9 +184,9 @@ export default function AdminDashboard() {
         {/* Topbar Clean Breadcrumb (Styleguide Section 25) */}
         <header className="bg-white border-b border-neutral-200 px-6 py-4 flex items-center justify-between flex-shrink-0">
           <div className="flex items-center gap-2 text-xs">
-            <span className="font-semibold text-neutral-400">Admin</span>
+            <span className="font-medium text-neutral-400">Admin</span>
             <span className="text-neutral-300">/</span>
-            <h1 className="text-sm font-bold text-neutral-900">{getPageTitle()}</h1>
+            <h1 className="text-sm font-semibold text-neutral-900">{getPageTitle()}</h1>
           </div>
           <div className="flex items-center gap-3">
             <span className="text-xs text-neutral-500 font-medium">Masuk sebagai <strong className="text-neutral-900">{user.name || 'Admin'}</strong></span>
