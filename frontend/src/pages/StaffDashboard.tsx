@@ -82,8 +82,8 @@ export default function StaffDashboard() {
       `}>
         <div className="space-y-6">
           <div className="flex items-center justify-between px-2 pt-2 border-b border-brand-600/60 pb-4">
-            <div className="flex items-center gap-2">
-              <span className="w-7 h-7 bg-white text-brand-700 rounded-lg flex items-center justify-center font-bold text-xs">P</span>
+            <div className="flex items-center gap-2.5">
+              <img src="/logo.svg" alt="Padel Arena Logo" className="w-7 h-7 rounded-lg bg-white p-1 shadow-2xs flex-shrink-0" />
               <span className="font-semibold text-sm tracking-tight text-white">PADEL STAFF</span>
             </div>
             <span className="text-[10px] font-medium bg-brand-800/60 text-brand-100 px-2 py-0.5 rounded border border-brand-600/50">

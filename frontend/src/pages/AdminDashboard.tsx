@@ -110,8 +110,8 @@ export default function AdminDashboard() {
       <aside className="w-full md:w-64 h-full bg-brand-700 text-white border-r border-brand-800 flex-shrink-0 flex flex-col justify-between p-4 overflow-y-auto">
         <div className="space-y-6">
           <div className="flex items-center justify-between px-2 pt-2">
-            <div className="flex items-center gap-2">
-              <span className="w-7 h-7 bg-white text-brand-700 rounded-lg flex items-center justify-center font-bold text-xs">P</span>
+            <div className="flex items-center gap-2.5">
+              <img src="/logo.svg" alt="Padel Arena Logo" className="w-7 h-7 rounded-lg bg-white p-1 shadow-2xs flex-shrink-0" />
               <span className="font-semibold text-sm tracking-tight text-white">PADEL ADMIN</span>
             </div>
             <span className="text-[10px] font-medium bg-brand-800/60 text-brand-100 px-2 py-0.5 rounded border border-brand-600/50">

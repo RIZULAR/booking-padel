@@ -37,9 +37,9 @@ export default function Navbar() {
     <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-neutral-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-2 font-bold text-xl tracking-tight text-neutral-900">
-          <span className="bg-brand-600 text-white p-1.5 rounded-lg text-sm font-extrabold">PADEL</span>
-          <span>BOOKING</span>
+        <Link to="/" className="flex items-center gap-2.5 font-bold text-xl tracking-tight text-neutral-900">
+          <img src="/logo.svg" alt="Padel Arena Logo" className="w-8 h-8 rounded-lg shadow-2xs flex-shrink-0" />
+          <span className="font-semibold text-lg text-neutral-900">PADEL<span className="text-brand-600">ARENA</span></span>
         </Link>
 
         {/* Desktop Navigation Links */}
