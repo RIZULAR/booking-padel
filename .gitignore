@@ -30,3 +30,7 @@ build/
 
 # Logs
 *.log
+
+# Documentation files
+*.md
+
