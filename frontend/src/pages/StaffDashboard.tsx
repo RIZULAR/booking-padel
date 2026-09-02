@@ -63,8 +63,8 @@ export default function StaffDashboard() {
         onClick={() => setMobileOpen(false)}
         className={`flex items-center gap-3 px-3.5 py-2.5 text-xs font-medium rounded-lg transition-colors ${
           isActive 
-            ? 'bg-brand-50 text-brand-700 font-semibold border border-brand-200/60' 
-            : 'text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900'
+            ? 'bg-white text-brand-700 font-semibold border border-neutral-200 shadow-2xs' 
+            : 'text-neutral-600 hover:bg-neutral-200/60 hover:text-neutral-900'
         }`}
       >
         <Icon className={`w-4 h-4 flex-shrink-0 ${isActive ? 'text-brand-600' : 'text-neutral-400'}`} />
@@ -77,7 +77,7 @@ export default function StaffDashboard() {
     <div className="fixed inset-0 bg-neutral-50 flex flex-col md:flex-row overflow-hidden z-30 font-sans">
       {/* Staff Sidebar */}
       <aside className={`
-        fixed md:static inset-y-0 left-0 z-40 w-64 bg-white border-r border-neutral-200 p-4 flex flex-col justify-between transition-transform duration-200 ease-in-out flex-shrink-0
+        fixed md:static inset-y-0 left-0 z-40 w-64 bg-neutral-50 border-r border-neutral-200 p-4 flex flex-col justify-between transition-transform duration-200 ease-in-out flex-shrink-0
         ${mobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
       `}>
         <div className="space-y-6">
