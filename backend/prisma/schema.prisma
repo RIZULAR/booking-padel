@@ -1,0 +1,136 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  phone     String
+  password  String
+  role      String   @default("customer")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  bookings  Booking[]
+
+  @@map("users")
+}
+
+model Court {
+  id          String   @id @default(uuid())
+  name        String
+  description String
+  type        String
+  indoor      Boolean  @default(true)
+  capacity    Int      @default(4)
+  status      String   @default("active")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  images           CourtImage[]
+  pricing          Pricing[]
+  bookings         Booking[]
+  blockedSchedules BlockedSchedule[]
+
+  @@map("courts")
+}
+
+model CourtImage {
+  id        String   @id @default(uuid())
+  courtId   String   @map("court_id")
+  imageUrl  String   @map("image_url")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  court     Court    @relation(fields: [courtId], references: [id])
+
+  @@map("court_images")
+}
+
+model OperatingHours {
+  id        String   @id @default(uuid())
+  day       Int      // 0 = Sunday, 1 = Monday, etc.
+  openTime  String   @map("open_time")
+  closeTime String   @map("close_time")
+  isClosed  Boolean  @default(false) @map("is_closed")
+
+  @@map("operating_hours")
+}
+
+model Pricing {
+  id        String   @id @default(uuid())
+  courtId   String   @map("court_id")
+  dayType   String   @map("day_type")
+  startTime String   @map("start_time")
+  endTime   String   @map("end_time")
+  price     Int
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  court     Court    @relation(fields: [courtId], references: [id])
+
+  @@map("pricing")
+}
+
+model Booking {
+  id           String   @id @default(uuid())
+  bookingCode  String   @unique @map("booking_code")
+  userId       String   @map("user_id")
+  courtId      String   @map("court_id")
+  bookingDate  DateTime @map("booking_date")
+  startTime    String   @map("start_time")
+  endTime      String   @map("end_time")
+  duration     Int      // in minutes
+  subtotal     Int
+  discount     Int      @default(0)
+  total        Int
+  status       String   @default("waiting_payment")
+  expiredAt    DateTime? @map("expired_at")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  user         User     @relation(fields: [userId], references: [id])
+  court        Court    @relation(fields: [courtId], references: [id])
+  payment      Payment?
+
+  @@map("bookings")
+}
+
+model Payment {
+  id              String   @id @default(uuid())
+  bookingId       String   @unique @map("booking_id")
+  paymentGateway  String   @map("payment_gateway")
+  paymentMethod   String?  @map("payment_method")
+  transactionId   String?  @map("transaction_id")
+  amount          Int
+  status          String   @default("pending")
+  paidAt          DateTime? @map("paid_at")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  booking         Booking  @relation(fields: [bookingId], references: [id])
+
+  @@map("payments")
+}
+
+model BlockedSchedule {
+  id        String   @id @default(uuid())
+  courtId   String   @map("court_id")
+  date      DateTime
+  startTime String   @map("start_time")
+  endTime   String   @map("end_time")
+  reason    String?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  court     Court    @relation(fields: [courtId], references: [id])
+
+  @@map("blocked_schedules")
+}
