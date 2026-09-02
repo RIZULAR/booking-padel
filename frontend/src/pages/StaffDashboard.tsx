@@ -778,14 +778,23 @@ function StaffSchedule() {
     });
   }, [bookings, selectedDate]);
 
-  // Create O(1) instant lookup map for start times
-  const startBookingMap = useMemo(() => {
-    const map: Record<string, any> = {};
+  // Create O(1) instant lookup maps for starting & occupied time slots
+  const { startBookingMap, occupiedBookingMap } = useMemo(() => {
+    const startMap: Record<string, any> = {};
+    const occupiedMap: Record<string, any> = {};
+
     dayBookings.forEach(b => {
-      map[`${b.courtId}_${b.startTime}`] = b;
+      startMap[`${b.courtId}_${b.startTime}`] = b;
+
+      timeSlots.forEach(t => {
+        if (b.startTime <= t && b.endTime > t) {
+          occupiedMap[`${b.courtId}_${t}`] = b;
+        }
+      });
     });
-    return map;
-  }, [dayBookings]);
+
+    return { startBookingMap: startMap, occupiedBookingMap: occupiedMap };
+  }, [dayBookings, timeSlots]);
 
   const [viewMode, setViewMode] = useState<'combined-vertical' | 'cards' | 'horizontal'>('combined-vertical');
 
@@ -844,12 +853,12 @@ function StaffSchedule() {
 
       {viewMode === 'combined-vertical' ? (
         /* Combined Vertical Table (Jam -> Lapangan 1, 2, 3...) */
-        <Card className="border border-neutral-200 bg-white shadow-xs rounded-xl overflow-hidden">
+        <Card className="border border-neutral-200 bg-white shadow-xs rounded-xl overflow-hidden contain-paint">
           <CardContent className="p-0">
             <div className="overflow-x-auto">
               <table className="w-full text-xs border-collapse text-left">
                 <thead>
-                  <tr className="bg-neutral-100/90 text-neutral-800 border-b border-neutral-200">
+                  <tr className="bg-neutral-100 text-neutral-800 border-b border-neutral-200">
                     <th className="p-3 w-28 font-mono font-bold border-r border-neutral-200 text-center uppercase tracking-wider text-[11px] bg-neutral-100">
                       Waktu / Jam
                     </th>
@@ -868,7 +877,7 @@ function StaffSchedule() {
 
                     return timeSlots.map((time, timeIdx) => {
                       return (
-                        <tr key={time} className="hover:bg-neutral-50/40 transition-colors">
+                        <tr key={time}>
                           {/* Time Badge (Column 1) */}
                           <td className="p-3 font-mono font-bold text-neutral-700 bg-neutral-50/60 border-r border-neutral-200 text-center align-middle text-xs">
                             {time} WIB
@@ -882,10 +891,7 @@ function StaffSchedule() {
                             }
 
                             const startingBooking = startBookingMap[`${court.id}_${time}`];
-                            const ongoingBooking = !startingBooking ? dayBookings.find(b => 
-                              b.courtId === court.id && b.startTime <= time && b.endTime > time
-                            ) : null;
-
+                            const ongoingBooking = !startingBooking ? occupiedBookingMap[`${court.id}_${time}`] : null;
                             const booking = startingBooking || ongoingBooking;
 
                             if (booking) {
@@ -904,14 +910,14 @@ function StaffSchedule() {
                                 >
                                   <div 
                                     onClick={() => setSelectedBooking(booking)}
-                                    className={`p-2.5 rounded-lg border text-left cursor-pointer transition-colors shadow-2xs flex flex-col justify-between h-full min-h-[60px] ${
+                                    className={`p-2.5 rounded-lg border text-left cursor-pointer flex flex-col justify-between h-full min-h-[60px] ${
                                       booking.status === 'confirmed'
-                                        ? 'bg-brand-50/90 border-brand-300 hover:bg-brand-100/90'
+                                        ? 'bg-brand-50 border-brand-300'
                                         : booking.status === 'checked_in'
-                                        ? 'bg-sky-50/90 border-sky-300 hover:bg-sky-100/90'
+                                        ? 'bg-sky-50 border-sky-300'
                                         : booking.status === 'completed'
-                                        ? 'bg-neutral-100 border-neutral-300 hover:bg-neutral-200/90'
-                                        : 'bg-amber-50/90 border-amber-300 hover:bg-amber-100/90'
+                                        ? 'bg-neutral-100 border-neutral-300'
+                                        : 'bg-amber-50 border-amber-300'
                                     }`}
                                   >
                                     <div className="flex items-center justify-between gap-1">
@@ -945,7 +951,7 @@ function StaffSchedule() {
                               >
                                 <button 
                                   onClick={() => setSelectedEmptySlot({ courtName: court.name, courtId: court.id, time })}
-                                  className="w-full h-full min-h-[40px] rounded-lg border border-dashed border-neutral-200 hover:border-emerald-500 hover:bg-emerald-50/50 flex items-center justify-center text-neutral-400 hover:text-emerald-700 transition-colors text-[11px] font-medium"
+                                  className="w-full h-full min-h-[40px] rounded-lg border border-dashed border-neutral-200 hover:border-emerald-500 hover:bg-emerald-50/50 flex items-center justify-center text-neutral-400 hover:text-emerald-700 text-[11px] font-medium"
                                 >
                                   + Kosong
                                 </button>
@@ -987,9 +993,7 @@ function StaffSchedule() {
                     }
 
                     const startingBooking = startBookingMap[`${court.id}_${time}`];
-                    const ongoingBooking = !startingBooking ? dayBookings.find(b => 
-                      b.courtId === court.id && b.startTime <= time && b.endTime > time
-                    ) : null;
+                    const ongoingBooking = !startingBooking ? occupiedBookingMap[`${court.id}_${time}`] : null;
 
                     const booking = startingBooking || ongoingBooking;
 
@@ -1099,9 +1103,7 @@ function StaffSchedule() {
                       }
 
                       const startingBooking = startBookingMap[`${court.id}_${time}`];
-                      const ongoingBooking = !startingBooking ? dayBookings.find(b => 
-                        b.courtId === court.id && b.startTime <= time && b.endTime > time
-                      ) : null;
+                      const ongoingBooking = !startingBooking ? occupiedBookingMap[`${court.id}_${time}`] : null;
 
                       const booking = startingBooking || ongoingBooking;
 
