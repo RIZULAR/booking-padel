@@ -1,0 +1,29 @@
+# Dependencies
+node_modules/
+
+# IDE & Editor files
+.gemini/
+.cursor/
+.opencode/
+.impeccable/
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Databases
+*.db
+*.sqlite
+backend/dev.db
+
+# Build outputs
+dist/
+build/
+
+# Logs
+*.log
