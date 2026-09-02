@@ -787,7 +787,7 @@ function StaffSchedule() {
     return map;
   }, [dayBookings]);
 
-  const [viewMode, setViewMode] = useState<'vertical' | 'horizontal'>('vertical');
+  const [viewMode, setViewMode] = useState<'combined-vertical' | 'cards' | 'horizontal'>('combined-vertical');
 
   return (
     <div className="space-y-6">
@@ -802,10 +802,16 @@ function StaffSchedule() {
         <div className="flex flex-wrap items-center gap-3">
           <div className="flex items-center rounded-lg border border-neutral-200 bg-neutral-100 p-0.5 text-xs font-semibold">
             <button 
-              onClick={() => setViewMode('vertical')} 
-              className={`px-3 py-1 rounded transition-colors ${viewMode === 'vertical' ? 'bg-white text-brand-700 shadow-2xs font-bold' : 'text-neutral-600 hover:text-neutral-900'}`}
+              onClick={() => setViewMode('combined-vertical')} 
+              className={`px-3 py-1 rounded transition-colors ${viewMode === 'combined-vertical' ? 'bg-white text-brand-700 shadow-2xs font-bold' : 'text-neutral-600 hover:text-neutral-900'}`}
             >
-              Vertikal (Kebawah)
+              Tabel Vertikal
+            </button>
+            <button 
+              onClick={() => setViewMode('cards')} 
+              className={`px-3 py-1 rounded transition-colors ${viewMode === 'cards' ? 'bg-white text-brand-700 shadow-2xs font-bold' : 'text-neutral-600 hover:text-neutral-900'}`}
+            >
+              Kartu Lapangan
             </button>
             <button 
               onClick={() => setViewMode('horizontal')} 
@@ -836,8 +842,127 @@ function StaffSchedule() {
         </div>
       </div>
 
-      {viewMode === 'vertical' ? (
-        /* Vertical Agenda Grid Layout (Vertikal Kebawah) */
+      {viewMode === 'combined-vertical' ? (
+        /* Combined Vertical Table (Jam -> Lapangan 1, 2, 3...) */
+        <Card className="border border-neutral-200 bg-white shadow-xs rounded-xl overflow-hidden">
+          <CardContent className="p-0">
+            <div className="overflow-x-auto">
+              <table className="w-full text-xs border-collapse text-left">
+                <thead>
+                  <tr className="bg-neutral-100/90 text-neutral-800 border-b border-neutral-200">
+                    <th className="p-3 w-28 font-mono font-bold border-r border-neutral-200 text-center uppercase tracking-wider text-[11px] bg-neutral-100">
+                      Waktu / Jam
+                    </th>
+                    {courts.map(court => (
+                      <th key={court.id} className="p-3 border-r border-neutral-200 last:border-r-0 font-bold text-neutral-900 min-w-[180px]">
+                        <div className="text-xs">{court.name}</div>
+                        <span className="text-[10px] font-semibold text-neutral-500">{court.indoor ? 'Indoor' : 'Outdoor'}</span>
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-neutral-200">
+                  {(() => {
+                    const courtSkipCounts: Record<string, number> = {};
+                    courts.forEach(c => courtSkipCounts[c.id] = 0);
+
+                    return timeSlots.map((time, timeIdx) => {
+                      return (
+                        <tr key={time} className="hover:bg-neutral-50/40 transition-colors">
+                          {/* Time Badge (Column 1) */}
+                          <td className="p-3 font-mono font-bold text-neutral-700 bg-neutral-50/60 border-r border-neutral-200 text-center align-middle text-xs">
+                            {time} WIB
+                          </td>
+
+                          {/* Court Columns */}
+                          {courts.map(court => {
+                            if (courtSkipCounts[court.id] > 0) {
+                              courtSkipCounts[court.id]--;
+                              return null;
+                            }
+
+                            const startingBooking = startBookingMap[`${court.id}_${time}`];
+                            const ongoingBooking = !startingBooking ? dayBookings.find(b => 
+                              b.courtId === court.id && b.startTime <= time && b.endTime > time
+                            ) : null;
+
+                            const booking = startingBooking || ongoingBooking;
+
+                            if (booking) {
+                              const parseHour = (t: string) => parseInt(t.split(':')[0], 10);
+                              const endH = parseHour(booking.endTime);
+                              const currentHour = parseHour(time);
+                              
+                              const spanHours = Math.max(1, Math.min(endH - currentHour, timeSlots.length - timeIdx));
+                              courtSkipCounts[court.id] = spanHours - 1;
+
+                              return (
+                                <td 
+                                  key={court.id} 
+                                  rowSpan={spanHours}
+                                  className="p-1.5 border-r border-neutral-200 last:border-r-0 align-middle"
+                                >
+                                  <div 
+                                    onClick={() => setSelectedBooking(booking)}
+                                    className={`p-2.5 rounded-lg border text-left cursor-pointer transition-colors shadow-2xs flex flex-col justify-between h-full min-h-[60px] ${
+                                      booking.status === 'confirmed'
+                                        ? 'bg-brand-50/90 border-brand-300 hover:bg-brand-100/90'
+                                        : booking.status === 'checked_in'
+                                        ? 'bg-sky-50/90 border-sky-300 hover:bg-sky-100/90'
+                                        : booking.status === 'completed'
+                                        ? 'bg-neutral-100 border-neutral-300 hover:bg-neutral-200/90'
+                                        : 'bg-amber-50/90 border-amber-300 hover:bg-amber-100/90'
+                                    }`}
+                                  >
+                                    <div className="flex items-center justify-between gap-1">
+                                      <span className="font-bold text-neutral-900 text-xs truncate">{booking.user?.name || 'Customer'}</span>
+                                      <Badge variant={
+                                        booking.status === 'confirmed' ? 'success' :
+                                        booking.status === 'checked_in' ? 'info' :
+                                        booking.status === 'completed' ? 'secondary' : 'warning'
+                                      } className="px-1.5 py-0.5 text-[9px] shrink-0">
+                                        {booking.status === 'confirmed' ? 'Confirmed' :
+                                         booking.status === 'checked_in' ? 'Checked-in' :
+                                         booking.status === 'completed' ? 'Done' : 'Pending'}
+                                      </Badge>
+                                    </div>
+
+                                    <div className="flex items-center justify-between text-[10px] text-neutral-600 font-mono mt-1">
+                                      <span>{booking.bookingCode}</span>
+                                      <span className="font-sans font-medium text-brand-700 bg-white/80 px-1.5 py-0.5 rounded border border-neutral-200/80">
+                                        {booking.startTime} - {booking.endTime}
+                                      </span>
+                                    </div>
+                                  </div>
+                                </td>
+                              );
+                            }
+
+                            return (
+                              <td 
+                                key={court.id} 
+                                className="p-1.5 border-r border-neutral-200 last:border-r-0 align-middle h-14"
+                              >
+                                <button 
+                                  onClick={() => setSelectedEmptySlot({ courtName: court.name, courtId: court.id, time })}
+                                  className="w-full h-full min-h-[40px] rounded-lg border border-dashed border-neutral-200 hover:border-emerald-500 hover:bg-emerald-50/50 flex items-center justify-center text-neutral-400 hover:text-emerald-700 transition-colors text-[11px] font-medium"
+                                >
+                                  + Kosong
+                                </button>
+                              </td>
+                            );
+                          })}
+                        </tr>
+                      );
+                    });
+                  })()}
+                </tbody>
+              </table>
+            </div>
+          </CardContent>
+        </Card>
+      ) : viewMode === 'cards' ? (
+        /* Vertical Agenda Grid Layout (Kartu Lapangan) */
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {courts.map(court => {
             let skipCount = 0;
