@@ -173,8 +173,8 @@ export default function StaffDashboard() {
           </div>
         </header>
 
-        {/* Content Panel Scrollable */}
-        <main className="flex-1 p-4 md:p-6 space-y-6 overflow-y-auto">
+        {/* Content Panel Scrollable (GPU Layer Accelerated for 60fps Native Scrolling) */}
+        <main className="flex-1 p-4 md:p-6 space-y-6 overflow-y-auto overscroll-y-contain [transform:translateZ(0)]">
           <Routes>
             <Route path="/" element={<StaffDashboardIndex />} />
             <Route path="/bookings" element={<StaffBookings />} />
@@ -695,6 +695,12 @@ function StaffManualBooking() {
   );
 }
 
+// Static Time Slots Constant (prevents array reference recreation on every render)
+const TIME_SLOTS = [
+  '08:00', '09:00', '10:00', '11:00', '12:00', '13:00',
+  '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00'
+];
+
 {/* 4. Staff Schedule Calendar Timetable Matrix (Styleguide Compliant) */}
 function StaffSchedule() {
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
@@ -757,11 +763,6 @@ function StaffSchedule() {
     loadScheduleData();
   };
 
-  const timeSlots = [
-    '08:00', '09:00', '10:00', '11:00', '12:00', '13:00',
-    '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00'
-  ];
-
   const dateFormatted = new Date(selectedDate).toLocaleDateString('id-ID', {
     weekday: 'long',
     day: 'numeric',
@@ -786,7 +787,7 @@ function StaffSchedule() {
     dayBookings.forEach(b => {
       startMap[`${b.courtId}_${b.startTime}`] = b;
 
-      timeSlots.forEach(t => {
+      TIME_SLOTS.forEach(t => {
         if (b.startTime <= t && b.endTime > t) {
           occupiedMap[`${b.courtId}_${t}`] = b;
         }
@@ -794,7 +795,7 @@ function StaffSchedule() {
     });
 
     return { startBookingMap: startMap, occupiedBookingMap: occupiedMap };
-  }, [dayBookings, timeSlots]);
+  }, [dayBookings]);
 
   const [viewMode, setViewMode] = useState<'combined-vertical' | 'cards' | 'horizontal'>('combined-vertical');
 
@@ -875,7 +876,7 @@ function StaffSchedule() {
                     const courtSkipCounts: Record<string, number> = {};
                     courts.forEach(c => courtSkipCounts[c.id] = 0);
 
-                    return timeSlots.map((time, timeIdx) => {
+                    return TIME_SLOTS.map((time, timeIdx) => {
                       return (
                         <tr key={time}>
                           {/* Time Badge (Column 1) */}
@@ -899,7 +900,7 @@ function StaffSchedule() {
                               const endH = parseHour(booking.endTime);
                               const currentHour = parseHour(time);
                               
-                              const spanHours = Math.max(1, Math.min(endH - currentHour, timeSlots.length - timeIdx));
+                              const spanHours = Math.max(1, Math.min(endH - currentHour, TIME_SLOTS.length - timeIdx));
                               courtSkipCounts[court.id] = spanHours - 1;
 
                               return (
@@ -986,7 +987,7 @@ function StaffSchedule() {
                 </CardHeader>
 
                 <CardContent className="p-3 space-y-2 flex-1">
-                  {timeSlots.map((time, idx) => {
+                  {TIME_SLOTS.map((time, idx) => {
                     if (skipCount > 0) {
                       skipCount--;
                       return null;
@@ -1004,7 +1005,7 @@ function StaffSchedule() {
                       const totalDurationHours = endH - startH;
 
                       const currentHour = parseHour(time);
-                      const spanHours = Math.max(1, Math.min(endH - currentHour, timeSlots.length - idx));
+                      const spanHours = Math.max(1, Math.min(endH - currentHour, TIME_SLOTS.length - idx));
                       skipCount = spanHours - 1;
 
                       return (
@@ -1084,7 +1085,7 @@ function StaffSchedule() {
           <div className="flex-1 overflow-x-auto contain-paint scroll-smooth">
             <div className="min-w-[1540px]">
               <div className="flex h-12 border-b border-neutral-200 bg-neutral-100/90">
-                {timeSlots.map(time => (
+                {TIME_SLOTS.map(time => (
                   <div key={time} className="w-28 flex-shrink-0 p-2.5 text-center border-r border-neutral-200 font-mono font-bold text-neutral-800 flex items-center justify-center">
                     {time} WIB
                   </div>
@@ -1096,7 +1097,7 @@ function StaffSchedule() {
 
                 return (
                   <div key={court.id} className="flex h-20 border-b border-neutral-200 last:border-b-0 hover:bg-neutral-50/40 transition-colors">
-                    {timeSlots.map((time, idx) => {
+                    {TIME_SLOTS.map((time, idx) => {
                       if (skipCount > 0) {
                         skipCount--;
                         return null;
@@ -1114,7 +1115,7 @@ function StaffSchedule() {
                         const totalDurationHours = endH - startH;
 
                         const currentHour = parseHour(time);
-                        const spanHours = Math.max(1, Math.min(endH - currentHour, timeSlots.length - idx));
+                        const spanHours = Math.max(1, Math.min(endH - currentHour, TIME_SLOTS.length - idx));
                         skipCount = spanHours - 1;
 
                         const widthPx = spanHours * 112;
