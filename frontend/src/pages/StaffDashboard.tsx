@@ -787,6 +787,8 @@ function StaffSchedule() {
     return map;
   }, [dayBookings]);
 
+  const [viewMode, setViewMode] = useState<'vertical' | 'horizontal'>('vertical');
+
   return (
     <div className="space-y-6">
       {/* Calendar Control Header Bar */}
@@ -796,8 +798,23 @@ function StaffSchedule() {
           <p className="text-xs text-brand-600 font-semibold mt-0.5">{dateFormatted}</p>
         </div>
 
-        {/* Date Navigator Controls */}
-        <div className="flex flex-wrap items-center gap-2">
+        {/* Date Navigator & View Mode Controls */}
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="flex items-center rounded-lg border border-neutral-200 bg-neutral-100 p-0.5 text-xs font-semibold">
+            <button 
+              onClick={() => setViewMode('vertical')} 
+              className={`px-3 py-1 rounded transition-colors ${viewMode === 'vertical' ? 'bg-white text-brand-700 shadow-2xs font-bold' : 'text-neutral-600 hover:text-neutral-900'}`}
+            >
+              Vertikal (Kebawah)
+            </button>
+            <button 
+              onClick={() => setViewMode('horizontal')} 
+              className={`px-3 py-1 rounded transition-colors ${viewMode === 'horizontal' ? 'bg-white text-brand-700 shadow-2xs font-bold' : 'text-neutral-600 hover:text-neutral-900'}`}
+            >
+              Horizontal
+            </button>
+          </div>
+
           <div className="flex items-center rounded-lg border border-neutral-300 bg-neutral-50 p-0.5">
             <button onClick={() => changeDate(-1)} className="px-2.5 py-1 text-xs font-bold text-neutral-700 hover:bg-white rounded transition-colors">
               ‹ Prev
@@ -819,41 +836,25 @@ function StaffSchedule() {
         </div>
       </div>
 
-      {/* Horizontal Timetable Timeline Matrix (GPU-Accelerated Two-Panel Flex Architecture) */}
-      <div className="flex border border-neutral-200 bg-white shadow-xs rounded-xl overflow-hidden text-xs">
-        {/* Left Column Panel: Fixed Court Names */}
-        <div className="w-44 flex-shrink-0 border-r border-neutral-200 bg-neutral-50/70 z-10">
-          <div className="h-12 px-3 font-bold uppercase tracking-wider text-[11px] text-neutral-700 border-b border-neutral-200 flex items-center bg-neutral-100/90">
-            Lapangan / Court
-          </div>
-          {courts.map(court => (
-            <div key={court.id} className="h-20 p-3 flex flex-col justify-center border-b border-neutral-200 last:border-b-0 bg-white">
-              <div className="text-xs font-bold text-neutral-900 truncate">{court.name}</div>
-              <span className="text-[10px] font-semibold text-neutral-500">
-                {court.indoor ? 'Indoor' : 'Outdoor'}
-              </span>
-            </div>
-          ))}
-        </div>
+      {viewMode === 'vertical' ? (
+        /* Vertical Agenda Grid Layout (Vertikal Kebawah) */
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          {courts.map(court => {
+            let skipCount = 0;
 
-        {/* Right Column Panel: Natively GPU-Scrollable Timetable Grid */}
-        <div className="flex-1 overflow-x-auto contain-paint scroll-smooth">
-          <div className="min-w-[1540px]">
-            {/* Header Timeline Row */}
-            <div className="flex h-12 border-b border-neutral-200 bg-neutral-100/90">
-              {timeSlots.map(time => (
-                <div key={time} className="w-28 flex-shrink-0 p-2.5 text-center border-r border-neutral-200 font-mono font-bold text-neutral-800 flex items-center justify-center">
-                  {time} WIB
-                </div>
-              ))}
-            </div>
+            return (
+              <Card key={court.id} className="border border-neutral-200 bg-white shadow-xs rounded-xl overflow-hidden flex flex-col">
+                <CardHeader className="bg-neutral-100/90 border-b border-neutral-200 py-3 px-4 flex flex-row items-center justify-between">
+                  <div>
+                    <CardTitle className="text-xs font-bold text-neutral-900">{court.name}</CardTitle>
+                    <p className="text-[10px] text-neutral-500 font-medium">{court.indoor ? 'Indoor Court' : 'Outdoor Court'}</p>
+                  </div>
+                  <span className="text-[10px] font-bold bg-brand-50 text-brand-700 px-2 py-0.5 rounded border border-brand-200">
+                    {court.indoor ? 'INDOOR' : 'OUTDOOR'}
+                  </span>
+                </CardHeader>
 
-            {/* Timetable Slots Rows for Courts */}
-            {courts.map(court => {
-              let skipCount = 0;
-
-              return (
-                <div key={court.id} className="flex h-20 border-b border-neutral-200 last:border-b-0 hover:bg-neutral-50/40 transition-colors">
+                <CardContent className="p-3 space-y-2 flex-1">
                   {timeSlots.map((time, idx) => {
                     if (skipCount > 0) {
                       skipCount--;
@@ -877,69 +878,182 @@ function StaffSchedule() {
                       const spanHours = Math.max(1, Math.min(endH - currentHour, timeSlots.length - idx));
                       skipCount = spanHours - 1;
 
-                      const widthPx = spanHours * 112; // 112px per slot
-
                       return (
                         <div 
-                          key={time} 
-                          style={{ width: `${widthPx}px` }} 
-                          className="flex-shrink-0 p-1.5 border-r border-neutral-200 h-full"
+                          key={time}
+                          onClick={() => setSelectedBooking(booking)}
+                          className={`p-3 rounded-lg border text-left cursor-pointer transition-colors shadow-2xs flex flex-col justify-between gap-1.5 ${
+                            booking.status === 'confirmed'
+                              ? 'bg-brand-50/90 border-brand-300 hover:bg-brand-100/90'
+                              : booking.status === 'checked_in'
+                              ? 'bg-sky-50/90 border-sky-300 hover:bg-sky-100/90'
+                              : booking.status === 'completed'
+                              ? 'bg-neutral-100 border-neutral-300 hover:bg-neutral-200/90'
+                              : 'bg-amber-50/90 border-amber-300 hover:bg-amber-100/90'
+                          }`}
                         >
-                          <div 
-                            onClick={() => setSelectedBooking(booking)}
-                            className={`p-2 rounded-lg border text-left cursor-pointer transition-colors shadow-2xs h-full flex flex-col justify-between ${
-                              booking.status === 'confirmed'
-                                ? 'bg-brand-50 border-brand-300 hover:bg-brand-100/80'
-                                : booking.status === 'checked_in'
-                                ? 'bg-sky-50 border-sky-300 hover:bg-sky-100/80'
-                                : booking.status === 'completed'
-                                ? 'bg-neutral-100 border-neutral-300 hover:bg-neutral-200/80'
-                                : 'bg-amber-50 border-amber-300 hover:bg-amber-100/80'
-                            }`}
-                          >
-                            <div className="flex items-center justify-between gap-1">
-                              <div className="font-bold text-neutral-900 text-xs truncate">
-                                {booking.user?.name || 'Customer'}
-                              </div>
-                              <Badge variant={
-                                booking.status === 'confirmed' ? 'success' :
-                                booking.status === 'checked_in' ? 'info' :
-                                booking.status === 'completed' ? 'secondary' : 'warning'
-                              } className="px-1.5 py-0.5 text-[9px] shrink-0">
-                                {booking.status === 'confirmed' ? 'Confirmed' :
-                                 booking.status === 'checked_in' ? 'Checked-in' :
-                                 booking.status === 'completed' ? 'Done' : 'Pending'}
-                              </Badge>
-                            </div>
-
-                            <div className="flex items-center justify-between text-[10px] text-neutral-600 font-mono mt-1">
-                              <span>{booking.bookingCode}</span>
-                              <span className="font-sans font-medium text-brand-700 bg-white/80 px-1.5 py-0.5 rounded border border-neutral-200/80">
+                          <div className="flex items-center justify-between gap-2">
+                            <div className="flex items-center gap-1.5 min-w-0">
+                              <Clock className="w-3.5 h-3.5 text-neutral-500 shrink-0" />
+                              <span className="font-mono text-xs font-bold text-neutral-900 truncate">
                                 {booking.startTime} - {booking.endTime} ({totalDurationHours} Jam)
                               </span>
                             </div>
+                            <Badge variant={
+                              booking.status === 'confirmed' ? 'success' :
+                              booking.status === 'checked_in' ? 'info' :
+                              booking.status === 'completed' ? 'secondary' : 'warning'
+                            } className="px-1.5 py-0.5 text-[9px] shrink-0">
+                              {booking.status === 'confirmed' ? 'Confirmed' :
+                               booking.status === 'checked_in' ? 'Checked-in' :
+                               booking.status === 'completed' ? 'Done' : 'Pending'}
+                            </Badge>
+                          </div>
+
+                          <div className="flex items-center justify-between text-xs pt-1 border-t border-neutral-200/50">
+                            <span className="font-bold text-neutral-900 truncate">{booking.user?.name || 'Customer'}</span>
+                            <span className="font-mono text-[10px] text-neutral-500">{booking.bookingCode}</span>
                           </div>
                         </div>
                       );
                     }
 
                     return (
-                      <div key={time} className="w-28 flex-shrink-0 p-1.5 border-r border-neutral-200 h-full">
+                      <div key={time} className="flex items-center justify-between p-2 rounded-lg border border-dashed border-neutral-200 hover:border-emerald-500 hover:bg-emerald-50/40 transition-colors text-xs">
+                        <span className="font-mono font-medium text-neutral-600 text-[11px]">{time} WIB</span>
                         <button 
                           onClick={() => setSelectedEmptySlot({ courtName: court.name, courtId: court.id, time })}
-                          className="w-full h-full rounded-lg border border-dashed border-neutral-300 hover:border-emerald-500 hover:bg-emerald-50/50 flex items-center justify-center text-neutral-400 hover:text-emerald-700 transition-colors text-[11px] font-medium"
+                          className="text-[11px] font-semibold text-emerald-600 hover:text-emerald-700 hover:underline flex items-center gap-1"
                         >
                           <span>+</span> Kosong
                         </button>
                       </div>
                     );
                   })}
-                </div>
-              );
-            })}
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
+      ) : (
+        /* Horizontal Timetable Timeline Matrix */
+        <div className="flex border border-neutral-200 bg-white shadow-xs rounded-xl overflow-hidden text-xs">
+          <div className="w-44 flex-shrink-0 border-r border-neutral-200 bg-neutral-50/70 z-10">
+            <div className="h-12 px-3 font-bold uppercase tracking-wider text-[11px] text-neutral-700 border-b border-neutral-200 flex items-center bg-neutral-100/90">
+              Lapangan / Court
+            </div>
+            {courts.map(court => (
+              <div key={court.id} className="h-20 p-3 flex flex-col justify-center border-b border-neutral-200 last:border-b-0 bg-white">
+                <div className="text-xs font-bold text-neutral-900 truncate">{court.name}</div>
+                <span className="text-[10px] font-semibold text-neutral-500">
+                  {court.indoor ? 'Indoor' : 'Outdoor'}
+                </span>
+              </div>
+            ))}
+          </div>
+
+          <div className="flex-1 overflow-x-auto contain-paint scroll-smooth">
+            <div className="min-w-[1540px]">
+              <div className="flex h-12 border-b border-neutral-200 bg-neutral-100/90">
+                {timeSlots.map(time => (
+                  <div key={time} className="w-28 flex-shrink-0 p-2.5 text-center border-r border-neutral-200 font-mono font-bold text-neutral-800 flex items-center justify-center">
+                    {time} WIB
+                  </div>
+                ))}
+              </div>
+
+              {courts.map(court => {
+                let skipCount = 0;
+
+                return (
+                  <div key={court.id} className="flex h-20 border-b border-neutral-200 last:border-b-0 hover:bg-neutral-50/40 transition-colors">
+                    {timeSlots.map((time, idx) => {
+                      if (skipCount > 0) {
+                        skipCount--;
+                        return null;
+                      }
+
+                      const startingBooking = startBookingMap[`${court.id}_${time}`];
+                      const ongoingBooking = !startingBooking ? dayBookings.find(b => 
+                        b.courtId === court.id && b.startTime <= time && b.endTime > time
+                      ) : null;
+
+                      const booking = startingBooking || ongoingBooking;
+
+                      if (booking) {
+                        const parseHour = (t: string) => parseInt(t.split(':')[0], 10);
+                        const startH = startingBooking ? parseHour(time) : parseHour(booking.startTime);
+                        const endH = parseHour(booking.endTime);
+                        const totalDurationHours = endH - startH;
+
+                        const currentHour = parseHour(time);
+                        const spanHours = Math.max(1, Math.min(endH - currentHour, timeSlots.length - idx));
+                        skipCount = spanHours - 1;
+
+                        const widthPx = spanHours * 112;
+
+                        return (
+                          <div 
+                            key={time} 
+                            style={{ width: `${widthPx}px` }} 
+                            className="flex-shrink-0 p-1.5 border-r border-neutral-200 h-full"
+                          >
+                            <div 
+                              onClick={() => setSelectedBooking(booking)}
+                              className={`p-2 rounded-lg border text-left cursor-pointer transition-colors shadow-2xs h-full flex flex-col justify-between ${
+                                booking.status === 'confirmed'
+                                  ? 'bg-brand-50 border-brand-300 hover:bg-brand-100/80'
+                                  : booking.status === 'checked_in'
+                                  ? 'bg-sky-50 border-sky-300 hover:bg-sky-100/80'
+                                  : booking.status === 'completed'
+                                  ? 'bg-neutral-100 border-neutral-300 hover:bg-neutral-200/80'
+                                  : 'bg-amber-50 border-amber-300 hover:bg-amber-100/80'
+                              }`}
+                            >
+                              <div className="flex items-center justify-between gap-1">
+                                <div className="font-bold text-neutral-900 text-xs truncate">
+                                  {booking.user?.name || 'Customer'}
+                                </div>
+                                <Badge variant={
+                                  booking.status === 'confirmed' ? 'success' :
+                                  booking.status === 'checked_in' ? 'info' :
+                                  booking.status === 'completed' ? 'secondary' : 'warning'
+                                } className="px-1.5 py-0.5 text-[9px] shrink-0">
+                                  {booking.status === 'confirmed' ? 'Confirmed' :
+                                   booking.status === 'checked_in' ? 'Checked-in' :
+                                   booking.status === 'completed' ? 'Done' : 'Pending'}
+                                </Badge>
+                              </div>
+
+                              <div className="flex items-center justify-between text-[10px] text-neutral-600 font-mono mt-1">
+                                <span>{booking.bookingCode}</span>
+                                <span className="font-sans font-medium text-brand-700 bg-white/80 px-1.5 py-0.5 rounded border border-neutral-200/80">
+                                  {booking.startTime} - {booking.endTime} ({totalDurationHours} Jam)
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      }
+
+                      return (
+                        <div key={time} className="w-28 flex-shrink-0 p-1.5 border-r border-neutral-200 h-full">
+                          <button 
+                            onClick={() => setSelectedEmptySlot({ courtName: court.name, courtId: court.id, time })}
+                            className="w-full h-full rounded-lg border border-dashed border-neutral-300 hover:border-emerald-500 hover:bg-emerald-50/50 flex items-center justify-center text-neutral-400 hover:text-emerald-700 transition-colors text-[11px] font-medium"
+                          >
+                            <span>+</span> Kosong
+                          </button>
+                        </div>
+                      );
+                    })}
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       {/* Modal Detail Booking Slot Jam */}
       {selectedBooking && (
